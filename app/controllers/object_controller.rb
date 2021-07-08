@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
+require 'zip_generator'
+
 ##
 # API for delivering whole objects from stacks
 class ObjectController < ApplicationController
-  include Zipline
-
   def show
     files = accessible_files.map do |file|
       [
@@ -35,5 +35,15 @@ class ObjectController < ApplicationController
     Purl.files(druid).each do |file|
       yield file if can? :download, file
     end
+  end
+
+  def zipline(files, zipname = 'zipline.zip')
+    zip_generator = ZipGenerator.new(files)
+    headers['Content-Disposition'] = "attachment; filename=\"#{zipname.gsub '"', '\"'}\""
+    headers['Content-Type'] = Mime::Type.lookup_by_extension('zip').to_s
+    response.sending_file = true
+    response.cache_control[:public] ||= false
+    self.response_body = zip_generator
+    response.headers['Last-Modified'] = Time.now.httpdate
   end
 end

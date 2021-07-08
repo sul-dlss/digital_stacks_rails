@@ -83,7 +83,7 @@ gem 'cancancan'
 gem 'dor-rights-auth', require: 'dor/rights_auth'
 gem 'dalli'
 gem 'retries'
-gem 'zipline', '~> 1.2'
+gem 'zip_tricks'
 gem 'jwt'
 gem 'redis'
 
